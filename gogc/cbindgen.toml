@@ -1,0 +1,21 @@
+header = """
+/* gogc Header */
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+"""
+trailer = """
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
+"""
+
+include_guard = "gogc_H"
+include_version = true
+language = "C"
+
+[parse]
+
+[enum]
+prefix_with_name = true

@@ -1,0 +1,36 @@
+---
+GENERATOR:
+  PackageName: gen
+  PackageDescription:
+  PackageLicense:
+  Options:
+    SafeStrings: true
+  Includes:
+    - ../gogc.h
+  FlagGroups:
+    - {name: LDFLAGS, flags: ["-L${SRCDIR}/.. -lgogc"]}
+
+PARSER:
+  Defines:
+    __has_include_next(x): 1
+  IncludePaths:
+    - /usr/include
+  SourcesPaths:
+    - ./gogc.h
+
+TRANSLATOR:
+  ConstRules:
+    defines: expand
+    enum: cgo
+  PtrTips:
+    function:
+      - {target: "^gogc_destroy", tips: [ref]}
+  Rules:
+    global:
+      - {action: accept, from: "^gogc"}
+      - {transform: export}
+    private:
+      - {transform: unexport}
+    post-global:
+      - {transform: export}
+      - {load: snakecase}
