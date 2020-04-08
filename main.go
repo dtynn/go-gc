@@ -17,7 +17,7 @@ func main() {
 	// ctrl := make(chan struct{}, 1024)
 	// var wg sync.WaitGroup
 
-	attempts := 1000000
+	attempts := 10
 	// wg.Add(attempts)
 	rand.Seed(time.Now().UnixNano())
 
@@ -41,6 +41,7 @@ func main() {
 
 		//     ctrl <- struct{}{}
 
+		log.Println(i)
 		gen.GogcVerifyPost(reps, uint(len(reps)))
 		runtime.GC()
 		free := make([]byte, len(reps)*int((C.size_t)(gen.SizeOfGogcPublicReplicaInfoValue)))
