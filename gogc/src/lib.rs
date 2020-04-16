@@ -19,7 +19,7 @@ pub unsafe extern "C" fn gogc_verify_post(
         m.insert(i, r.clone());
     });
 
-    if s.len() == 0 {
-        std::thread::sleep(std::time::Duration::from_millis(100));
+    if s.len() > 0 {
+        std::thread::sleep(std::time::Duration::from_millis(50));
     }
 }
