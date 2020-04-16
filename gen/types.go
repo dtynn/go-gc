@@ -4,7 +4,7 @@
 package gen
 
 /*
-#cgo LDFLAGS: -L${SRCDIR}/.. -lgogc
+#cgo LDFLAGS: -L${SRCDIR}/.. -lgogc -ldl
 #include "../gogc.h"
 #include <stdlib.h>
 #include "cgo_helpers.h"
