@@ -161,14 +161,11 @@ type sliceHeader struct {
 const sizeOfPtr = unsafe.Sizeof(&struct{}{})
 
 // unpackArgSGogcPublicReplicaInfo transforms a sliced Go data structure into plain C format.
-func unpackArgSGogcPublicReplicaInfo(x []GogcPublicReplicaInfo) (unpacked *C.gogc_PublicReplicaInfo, allocs *cgoAllocMap) {
+func unpackArgSGogcPublicReplicaInfo(x []GogcPublicReplicaInfo) (unpacked *sliceHeader, allocs *cgoAllocMap) {
 	if x == nil {
 		return nil, nil
 	}
 	allocs = new(cgoAllocMap)
-	defer runtime.SetFinalizer(&unpacked, func(**C.gogc_PublicReplicaInfo) {
-		go allocs.Free()
-	})
 
 	len0 := len(x)
 	mem0 := allocGogcPublicReplicaInfoMemory(len0)
@@ -184,8 +181,12 @@ func unpackArgSGogcPublicReplicaInfo(x []GogcPublicReplicaInfo) (unpacked *C.gog
 		v0[i0], allocs0 = x[i0].PassValue()
 		allocs.Borrow(allocs0)
 	}
-	h := (*sliceHeader)(unsafe.Pointer(&v0))
-	unpacked = (*C.gogc_PublicReplicaInfo)(h.Data)
+	unpacked = (*sliceHeader)(unsafe.Pointer(&v0))
+
+	defer runtime.SetFinalizer(unpacked, func(*sliceHeader) {
+		go allocs.Free()
+	})
+
 	return
 }
 

@@ -17,7 +17,7 @@ func main() {
 	// ctrl := make(chan struct{}, 1024)
 	// var wg sync.WaitGroup
 
-	attempts := 10
+	attempts := 100000
 	// wg.Add(attempts)
 	rand.Seed(time.Now().UnixNano())
 
