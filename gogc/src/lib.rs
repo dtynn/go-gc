@@ -14,5 +14,12 @@ pub unsafe extern "C" fn gogc_verify_post(
 ) {
     let s = from_raw_parts(replicas_ptr, replicas_len);
     let _ = s.len();
-    std::thread::sleep(std::time::Duration::from_millis(120 + s.len() as u64 % 50));
+    let mut m = std::collections::BTreeMap::new();
+    s.iter().enumerate().for_each(|(i, r)| {
+        m.insert(i, r.clone());
+    });
+
+    if s.len() == 0 {
+        std::thread::sleep(std::time::Duration::from_millis(100));
+    }
 }

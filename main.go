@@ -6,7 +6,7 @@ import (
 	"math/rand"
 	"os"
 	// "runtime"
-	"sync"
+	// "sync"
 	"time"
 
 	"github.com/dtynn/go-gc/gen"
@@ -15,29 +15,29 @@ import (
 func main() {
 	log.Println(os.Getpid())
 	time.Sleep(20 * time.Second)
-	ctrl := make(chan struct{}, 100<<10)
-	var wg sync.WaitGroup
+	ctrl := make(chan struct{}, 2<<10)
+	// var wg sync.WaitGroup
 
-	attempts := 10000000
-	wg.Add(attempts)
+	// attempts := 10000000
+	// wg.Add(attempts)
 	rand.Seed(time.Now().UnixNano())
 
-	count := 120
-	reps := make([]gen.GogcPublicReplicaInfo, count)
-	for j := 0; j < count; j++ {
-		commR := [32]byte{}
-		rand.Read(commR[:])
-		reps[j] = gen.GogcPublicReplicaInfo{
-			SectorId: uint64(j),
-			CommR:    commR,
-		}
-	}
-
-	for i := 0; i < attempts; i++ {
+	for i := 0; ; i++ {
 		ctrl <- struct{}{}
+
+		count := 8000
+		reps := make([]gen.GogcPublicReplicaInfo, count)
+		for j := 0; j < count; j++ {
+			commR := [32]byte{}
+			rand.Read(commR[:])
+			reps[j] = gen.GogcPublicReplicaInfo{
+				SectorId: uint64(j),
+				CommR:    commR,
+			}
+		}
+
 		go func(i int) {
 			defer func() {
-				wg.Done()
 				<-ctrl
 			}()
 
@@ -51,5 +51,5 @@ func main() {
 		}(i)
 	}
 
-	wg.Wait()
+	// wg.Wait()
 }
