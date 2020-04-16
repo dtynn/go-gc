@@ -15,7 +15,7 @@ import (
 func main() {
 	log.Println(os.Getpid())
 	time.Sleep(20 * time.Second)
-	ctrl := make(chan struct{}, 1024)
+	ctrl := make(chan struct{}, 100<<10)
 	var wg sync.WaitGroup
 
 	attempts := 10000000
@@ -34,13 +34,12 @@ func main() {
 	}
 
 	for i := 0; i < attempts; i++ {
+		ctrl <- struct{}{}
 		go func(i int) {
 			defer func() {
 				wg.Done()
 				<-ctrl
 			}()
-
-			ctrl <- struct{}{}
 
 			log.Println(i)
 			gen.GogcVerifyPost(reps, uint(len(reps)))
