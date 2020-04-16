@@ -6,7 +6,7 @@ import (
 	"math/rand"
 	"os"
 	"runtime"
-	// "sync"
+	"sync"
 	"time"
 
 	"github.com/dtynn/go-gc/gen"
@@ -14,14 +14,15 @@ import (
 
 func main() {
 	log.Println(os.Getpid())
-	// ctrl := make(chan struct{}, 1024)
-	// var wg sync.WaitGroup
+	time.Sleep(20 * time.Second)
+	ctrl := make(chan struct{}, 80000)
+	var wg sync.WaitGroup
 
-	attempts := 100000
-	// wg.Add(attempts)
+	attempts := 10000000
+	wg.Add(attempts)
 	rand.Seed(time.Now().UnixNano())
 
-	count := 4000000
+	count := 2000
 	reps := make([]gen.GogcPublicReplicaInfo, count)
 	for j := 0; j < count; j++ {
 		commR := [32]byte{}
@@ -33,23 +34,23 @@ func main() {
 	}
 
 	for i := 0; i < attempts; i++ {
-		// go func() {
-		//     defer func() {
-		//         wg.Done()
-		//         <-ctrl
-		//     }()
+		go func(i int) {
+			defer func() {
+				wg.Done()
+				<-ctrl
+			}()
 
-		//     ctrl <- struct{}{}
+			ctrl <- struct{}{}
 
-		log.Println(i)
-		gen.GogcVerifyPost(reps, uint(len(reps)))
-		runtime.GC()
-		free := make([]byte, len(reps)*int((C.size_t)(gen.SizeOfGogcPublicReplicaInfoValue)))
-		if len(free) == 0 {
-			panic("0?")
-		}
-		// }()
+			log.Println(i)
+			gen.GogcVerifyPost(reps, uint(len(reps)))
+			runtime.GC()
+			free := make([]byte, len(reps)*int((C.size_t)(gen.SizeOfGogcPublicReplicaInfoValue)))
+			if len(free) == 0 {
+				panic("0?")
+			}
+		}(i)
 	}
 
-	// wg.Wait()
+	wg.Wait()
 }
