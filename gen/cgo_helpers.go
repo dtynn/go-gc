@@ -69,9 +69,9 @@ func (a *cgoAllocMap) Free() {
 // AllocGogcPublicReplicaInfoMemory allocates memory for type C.gogc_PublicReplicaInfo in C.
 // The caller is responsible for freeing the this memory via C.free.
 func allocGogcPublicReplicaInfoMemory(n int) unsafe.Pointer {
-	mem := C.malloc(C.size_t(n) * (C.size_t)(SizeOfGogcPublicReplicaInfoValue))
-	if mem == nil {
-		panic("memory alloc error")
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(SizeOfGogcPublicReplicaInfoValue))
+	if err != nil {
+		panic("memory alloc error: " + err.Error())
 	}
 
 	return mem
