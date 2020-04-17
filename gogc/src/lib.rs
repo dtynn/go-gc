@@ -16,6 +16,7 @@ pub unsafe extern "C" fn gogc_verify_post(
     let _ = s.len();
     let mut m = std::collections::BTreeMap::new();
     s.iter().enumerate().for_each(|(i, r)| {
+        assert!(r.sector_id == (i as u64 + 117));
         m.insert(i, r.clone());
     });
 

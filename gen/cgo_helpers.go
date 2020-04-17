@@ -11,7 +11,7 @@ package gen
 */
 import "C"
 import (
-	"runtime"
+	// "runtime"
 	"sync"
 	"unsafe"
 )
@@ -66,13 +66,14 @@ func (a *cgoAllocMap) Free() {
 	a.mux.Unlock()
 }
 
-// allocGogcPublicReplicaInfoMemory allocates memory for type C.gogc_PublicReplicaInfo in C.
+// AllocGogcPublicReplicaInfoMemory allocates memory for type C.gogc_PublicReplicaInfo in C.
 // The caller is responsible for freeing the this memory via C.free.
 func allocGogcPublicReplicaInfoMemory(n int) unsafe.Pointer {
-	mem, err := C.calloc(C.size_t(n), (C.size_t)(SizeOfGogcPublicReplicaInfoValue))
-	if err != nil {
-		panic("memory alloc error: " + err.Error())
+	mem := C.malloc(C.size_t(n) * (C.size_t)(SizeOfGogcPublicReplicaInfoValue))
+	if mem == nil {
+		panic("memory alloc error")
 	}
+
 	return mem
 }
 
@@ -182,10 +183,6 @@ func unpackArgSGogcPublicReplicaInfo(x []GogcPublicReplicaInfo) (unpacked *slice
 		allocs.Borrow(allocs0)
 	}
 	unpacked = (*sliceHeader)(unsafe.Pointer(&v0))
-
-	defer runtime.SetFinalizer(unpacked, func(*sliceHeader) {
-		go allocs.Free()
-	})
 
 	return
 }

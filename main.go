@@ -7,6 +7,7 @@ import (
 	"os"
 	// "runtime"
 	// "sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/dtynn/go-gc/gen"
@@ -14,24 +15,26 @@ import (
 
 func main() {
 	log.Println(os.Getpid())
-	time.Sleep(20 * time.Second)
-	ctrl := make(chan struct{}, 2<<10)
+	// time.Sleep(20 * time.Second)
+	ctrl := make(chan struct{}, 1024)
 	// var wg sync.WaitGroup
 
 	// attempts := 10000000
 	// wg.Add(attempts)
 	rand.Seed(time.Now().UnixNano())
 
+	var rounds int64
+
 	for i := 0; ; i++ {
 		ctrl <- struct{}{}
 
-		count := 400 << 10
+		count := 800 << 10
 		reps := make([]gen.GogcPublicReplicaInfo, count)
 		for j := 0; j < count; j++ {
 			commR := [32]byte{}
 			rand.Read(commR[:])
 			reps[j] = gen.GogcPublicReplicaInfo{
-				SectorId: uint64(j),
+				SectorId: uint64(j + 117),
 				CommR:    commR,
 			}
 		}
@@ -39,6 +42,9 @@ func main() {
 		go func(i int) {
 			defer func() {
 				<-ctrl
+				if total := atomic.AddInt64(&rounds, 1); total%10 == 0 {
+					log.Printf("total %d rounds", total)
+				}
 			}()
 
 			// log.Println(i)

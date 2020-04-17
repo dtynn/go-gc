@@ -14,7 +14,9 @@ import "runtime"
 
 // GogcVerifyPost function as declared in go-gc/gogc.h:23
 func GogcVerifyPost(replicasPtr []GogcPublicReplicaInfo, replicasLen uint) {
-	creplicasPtr, _ := unpackArgSGogcPublicReplicaInfo(replicasPtr)
+	creplicasPtr, creplicasPtrAllocMap := unpackArgSGogcPublicReplicaInfo(replicasPtr)
+	defer creplicasPtrAllocMap.Free()
+
 	creplicasLen, _ := (C.size_t)(replicasLen), cgoAllocsUnknown
 	C.gogc_verify_post((*C.gogc_PublicReplicaInfo)(creplicasPtr.Data), creplicasLen)
 	packSGogcPublicReplicaInfo(replicasPtr, (*C.gogc_PublicReplicaInfo)(creplicasPtr.Data))
