@@ -41,7 +41,7 @@ func main() {
 				<-ctrl
 			}()
 
-			log.Println(i)
+			// log.Println(i)
 			gen.GogcVerifyPost(reps, uint(len(reps)))
 			// runtime.GC()
 			// free := make([]byte, len(reps)*int((C.size_t)(gen.SizeOfGogcPublicReplicaInfoValue)))
