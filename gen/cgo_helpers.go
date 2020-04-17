@@ -66,9 +66,9 @@ func (a *cgoAllocMap) Free() {
 	a.mux.Unlock()
 }
 
-// allocGogcPublicReplicaInfoMemory allocates memory for type C.gogc_PublicReplicaInfo in C.
+// AllocGogcPublicReplicaInfoMemory allocates memory for type C.gogc_PublicReplicaInfo in C.
 // The caller is responsible for freeing the this memory via C.free.
-func allocGogcPublicReplicaInfoMemory(n int) unsafe.Pointer {
+func AllocGogcPublicReplicaInfoMemory(n int) unsafe.Pointer {
 	mem, err := C.calloc(C.size_t(n), (C.size_t)(SizeOfGogcPublicReplicaInfoValue))
 	if err != nil {
 		panic("memory alloc error: " + err.Error())
@@ -114,7 +114,7 @@ func (x *GogcPublicReplicaInfo) PassRef() (*C.gogc_PublicReplicaInfo, *cgoAllocM
 	} else if x.refafdcbbac != nil {
 		return x.refafdcbbac, nil
 	}
-	memafdcbbac := allocGogcPublicReplicaInfoMemory(1)
+	memafdcbbac := AllocGogcPublicReplicaInfoMemory(1)
 	refafdcbbac := (*C.gogc_PublicReplicaInfo)(memafdcbbac)
 	allocsafdcbbac := new(cgoAllocMap)
 	allocsafdcbbac.Add(memafdcbbac)
@@ -168,7 +168,7 @@ func unpackArgSGogcPublicReplicaInfo(x []GogcPublicReplicaInfo) (unpacked *slice
 	allocs = new(cgoAllocMap)
 
 	len0 := len(x)
-	mem0 := allocGogcPublicReplicaInfoMemory(len0)
+	mem0 := AllocGogcPublicReplicaInfoMemory(len0)
 	allocs.Add(mem0)
 	h0 := &sliceHeader{
 		Data: mem0,
