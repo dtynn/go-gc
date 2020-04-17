@@ -25,7 +25,7 @@ func main() {
 	for i := 0; ; i++ {
 		ctrl <- struct{}{}
 
-		count := 8000
+		count := 400 << 10
 		reps := make([]gen.GogcPublicReplicaInfo, count)
 		for j := 0; j < count; j++ {
 			commR := [32]byte{}
