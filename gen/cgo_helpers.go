@@ -9,10 +9,24 @@ package gen
 #include "cgo_helpers.h"
 #include <stdlib.h>
 #include <errno.h>
+#include<stdio.h>
 
 void *mycalloc(size_t nmemb, size_t size) {
-	errno = 0;
-	return calloc(nmemb, size);
+        void* ptr;
+        ptr = calloc(nmemb, size);
+        if (NULL == ptr) {
+                return NULL;
+        }
+
+        int en = errno;
+        if (0 != en) {
+                printf("alalalallalal %p: %d\n", ptr, en);
+                errno = en;
+                return NULL;
+        }
+
+        errno = 0;
+        return ptr;
 }
 */
 import "C"
