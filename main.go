@@ -17,6 +17,20 @@ import (
 func main() {
 	log.Println(os.Getpid())
 	// time.Sleep(20 * time.Second)
+
+	fire()
+	// wg.Wait()
+}
+
+func fire() {
+	defer func() {
+		if e := recover(); e != nil {
+			log.Printf("catured: %s", e)
+		}
+
+		time.Sleep(5 * time.Minute)
+	}()
+
 	ctrl := make(chan struct{}, 10)
 	// var wg sync.WaitGroup
 
@@ -69,6 +83,4 @@ func main() {
 			// }
 		}(i)
 	}
-
-	// wg.Wait()
 }
