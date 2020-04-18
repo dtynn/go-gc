@@ -23,13 +23,6 @@ func main() {
 }
 
 func fire() {
-	defer func() {
-		if e := recover(); e != nil {
-			log.Printf("catured: %s", e)
-		}
-
-		time.Sleep(5 * time.Minute)
-	}()
 
 	ctrl := make(chan struct{}, 10)
 	// var wg sync.WaitGroup
@@ -57,6 +50,14 @@ func fire() {
 		}
 
 		go func(i int) {
+			defer func() {
+				if e := recover(); e != nil {
+					log.Printf("catured: %s", e)
+					time.Sleep(20 * time.Second)
+					panic(e)
+				}
+			}()
+
 			defer func() {
 				<-ctrl
 				if total := atomic.AddInt64(&rounds, 1); total%10 == 0 {
