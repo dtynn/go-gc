@@ -193,5 +193,6 @@ func packSGogcPublicReplicaInfo(v []GogcPublicReplicaInfo, ptr0 *C.gogc_PublicRe
 	for i0 := range v {
 		ptr1 := (*(*[m / SizeOfGogcPublicReplicaInfoValue]C.gogc_PublicReplicaInfo)(unsafe.Pointer(ptr0)))[i0]
 		v[i0] = *NewGogcPublicReplicaInfoRef(unsafe.Pointer(&ptr1))
+		v[i0].Deref()
 	}
 }

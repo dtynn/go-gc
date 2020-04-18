@@ -2,6 +2,7 @@ package main
 
 import "C"
 import (
+	"fmt"
 	"log"
 	"math/rand"
 	"os"
@@ -16,7 +17,7 @@ import (
 func main() {
 	log.Println(os.Getpid())
 	// time.Sleep(20 * time.Second)
-	ctrl := make(chan struct{}, 1024)
+	ctrl := make(chan struct{}, 10)
 	// var wg sync.WaitGroup
 
 	// attempts := 10000000
@@ -28,13 +29,15 @@ func main() {
 	for i := 0; ; i++ {
 		ctrl <- struct{}{}
 
+		base := rand.Int() + 1
+		commR := [32]byte{}
+		rand.Read(commR[:])
+
 		count := 800 << 10
 		reps := make([]gen.GogcPublicReplicaInfo, count)
 		for j := 0; j < count; j++ {
-			commR := [32]byte{}
-			rand.Read(commR[:])
 			reps[j] = gen.GogcPublicReplicaInfo{
-				SectorId: uint64(j + 117),
+				SectorId: uint64(j + base),
 				CommR:    commR,
 			}
 		}
@@ -49,6 +52,16 @@ func main() {
 
 			// log.Println(i)
 			gen.GogcVerifyPost(reps, uint(len(reps)))
+			for j := range reps {
+				rep := reps[j]
+				if rep.SectorId != uint64(base+j) {
+					panic(fmt.Sprintf("sector id mismatch: base=%d, prev=%d, after=%v", base, base+j, rep.SectorId))
+				}
+
+				if rep.CommR != commR {
+					panic(fmt.Sprintf("comm_r mismatch, prev=%v, after=%v", commR, rep.CommR))
+				}
+			}
 			// runtime.GC()
 			// free := make([]byte, len(reps)*int((C.size_t)(gen.SizeOfGogcPublicReplicaInfoValue)))
 			// if len(free) == 0 {
