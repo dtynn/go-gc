@@ -1,8 +1,10 @@
 package main
 
+/*
+#include <stdlib.h>
+*/
 import "C"
 import (
-	"fmt"
 	"log"
 	"math/rand"
 	"os"
@@ -50,23 +52,14 @@ func main() {
 				}
 			}()
 
-			// log.Println(i)
-			gen.GogcVerifyPost(reps, uint(len(reps)))
-			for j := range reps {
-				rep := reps[j]
-				if rep.SectorId != uint64(base+j) {
-					panic(fmt.Sprintf("sector id mismatch: base=%d, prev=%d, after=%v", base, base+j, rep.SectorId))
-				}
+			ptr, err := C.calloc(800<<10, 40)
+			defer C.free(ptr)
 
-				if rep.CommR != commR {
-					panic(fmt.Sprintf("comm_r mismatch, prev=%v, after=%v", commR, rep.CommR))
-				}
+			if err != nil {
+				panic("boooooooom " + err.Error())
 			}
-			// runtime.GC()
-			// free := make([]byte, len(reps)*int((C.size_t)(gen.SizeOfGogcPublicReplicaInfoValue)))
-			// if len(free) == 0 {
-			//     panic("0?")
-			// }
+
+			time.Sleep(50 * time.Millisecond)
 		}(i)
 	}
 
