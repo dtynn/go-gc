@@ -6,7 +6,7 @@ import (
 	"log"
 	"math/rand"
 	"os"
-	// "runtime"
+	"runtime"
 	// "sync"
 	"sync/atomic"
 	"time"
@@ -76,7 +76,8 @@ func fire() {
 					panic(fmt.Sprintf("comm_r mismatch, prev=%v, after=%v", commR, rep.CommR))
 				}
 			}
-			// runtime.GC()
+
+			runtime.GC()
 			// free := make([]byte, len(reps)*int((C.size_t)(gen.SizeOfGogcPublicReplicaInfoValue)))
 			// if len(free) == 0 {
 			//     panic("0?")
