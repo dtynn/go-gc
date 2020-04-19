@@ -67,6 +67,7 @@ func fire() {
 			gen.GogcVerifyPost(reps, uint(len(reps)))
 			for j := range reps {
 				rep := reps[j]
+				rep.Deref()
 				if rep.SectorId != uint64(base+j) {
 					panic(fmt.Sprintf("sector id mismatch: base=%d, prev=%d, after=%v", base, base+j, rep.SectorId))
 				}
