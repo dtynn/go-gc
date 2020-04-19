@@ -1,5 +1,8 @@
 package main
 
+/*
+#include <malloc.h>
+*/
 import "C"
 import (
 	"fmt"
@@ -50,6 +53,23 @@ func fire() {
 		}
 
 		go func(i int) {
+			defer func() {
+				if e := recover(); e != nil {
+					mi := C.mallinfo()
+					log.Infof("mallinfo stats: ordblks=%d, smblks=%d, hblks=%d, hblkhd=%d, usmblks=%d, fsmblks=%d, uordblks=%d, fordblks=%d, keepcost=%d",
+						(uint64(mi.ordblks)),
+						(uint64(mi.smblks)),
+						(uint64(mi.hblks)),
+						(uint64(mi.hblkhd)),
+						(uint64(mi.usmblks)),
+						(uint64(mi.fsmblks)),
+						(uint64(mi.uordblks)),
+						(uint64(mi.fordblks)),
+						(uint64(mi.fsmblks)))
+					panic(e)
+				}
+			}()
+
 			defer func() {
 				<-ctrl
 				if total := atomic.AddInt64(&rounds, 1); total%10 == 0 {
