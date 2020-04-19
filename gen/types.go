@@ -4,17 +4,33 @@
 package gen
 
 /*
-#cgo LDFLAGS: -L${SRCDIR}/.. -lgogc -ldl
+#cgo LDFLAGS: -L${SRCDIR}/.. -lgogc
 #include "../gogc.h"
 #include <stdlib.h>
 #include "cgo_helpers.h"
 */
 import "C"
 
-// GogcPublicReplicaInfo as declared in go-gc/gogc.h:21
+// GogcNested as declared in go-gc/gogc.h:20
+type GogcNested struct {
+	CommD          [32]byte
+	ref9dd8d9bd    *C.gogc_Nested
+	allocs9dd8d9bd interface{}
+}
+
+// GogcPublicReplicaInfo as declared in go-gc/gogc.h:26
 type GogcPublicReplicaInfo struct {
 	CommR          [32]byte
 	SectorId       uint64
+	Nested         [][]GogcNested
 	refafdcbbac    *C.gogc_PublicReplicaInfo
 	allocsafdcbbac interface{}
+}
+
+// GogcPublicReplicaInfoCountResponse as declared in go-gc/gogc.h:31
+type GogcPublicReplicaInfoCountResponse struct {
+	CountSlice     []uint
+	CountCount     uint
+	refcb0aa722    *C.gogc_PublicReplicaInfoCountResponse
+	allocscb0aa722 interface{}
 }

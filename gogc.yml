@@ -5,6 +5,7 @@ GENERATOR:
   PackageLicense:
   Options:
     SafeStrings: true
+    KeepAlive: true
   Includes:
     - ../gogc.h
   FlagGroups:

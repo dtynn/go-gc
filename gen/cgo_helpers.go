@@ -4,34 +4,14 @@
 package gen
 
 /*
-#cgo LDFLAGS: -L${SRCDIR}/.. -lgogc -ldl
+#cgo LDFLAGS: -L${SRCDIR}/.. -lgogc
 #include "../gogc.h"
-#include "cgo_helpers.h"
 #include <stdlib.h>
-#include <errno.h>
-#include<stdio.h>
-
-void *mycalloc(size_t nmemb, size_t size) {
-        void* ptr;
-        ptr = calloc(nmemb, size);
-        if (NULL == ptr) {
-                return NULL;
-        }
-
-        int en = errno;
-        if (0 != en) {
-                printf("alalalallalal %p: %d\n", ptr, en);
-                errno = en;
-                return NULL;
-        }
-
-        errno = 0;
-        return ptr;
-}
+#include "cgo_helpers.h"
 */
 import "C"
 import (
-	// "runtime"
+	"fmt"
 	"sync"
 	"unsafe"
 )
@@ -86,18 +66,169 @@ func (a *cgoAllocMap) Free() {
 	a.mux.Unlock()
 }
 
-// AllocGogcPublicReplicaInfoMemory allocates memory for type C.gogc_PublicReplicaInfo in C.
+// allocGogcNestedMemory allocates memory for type C.gogc_Nested in C.
 // The caller is responsible for freeing the this memory via C.free.
-func allocGogcPublicReplicaInfoMemory(n int) unsafe.Pointer {
-	mem, err := C.calloc(C.size_t(n), (C.size_t)(SizeOfGogcPublicReplicaInfoValue))
-	if err != nil {
-		panic("memory alloc error: " + err.Error())
+func allocGogcNestedMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfGogcNestedValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
 	}
-
 	return mem
 }
 
-const SizeOfGogcPublicReplicaInfoValue = unsafe.Sizeof([1]C.gogc_PublicReplicaInfo{})
+const sizeOfGogcNestedValue = unsafe.Sizeof([1]C.gogc_Nested{})
+
+// Ref returns the underlying reference to C object or nil if struct is nil.
+func (x *GogcNested) Ref() *C.gogc_Nested {
+	if x == nil {
+		return nil
+	}
+	return x.ref9dd8d9bd
+}
+
+// Free invokes alloc map's free mechanism that cleanups any allocated memory using C free.
+// Does nothing if struct is nil or has no allocation map.
+func (x *GogcNested) Free() {
+	if x != nil && x.allocs9dd8d9bd != nil {
+		x.allocs9dd8d9bd.(*cgoAllocMap).Free()
+		x.ref9dd8d9bd = nil
+	}
+}
+
+// NewGogcNestedRef creates a new wrapper struct with underlying reference set to the original C object.
+// Returns nil if the provided pointer to C object is nil too.
+func NewGogcNestedRef(ref unsafe.Pointer) *GogcNested {
+	if ref == nil {
+		return nil
+	}
+	obj := new(GogcNested)
+	obj.ref9dd8d9bd = (*C.gogc_Nested)(unsafe.Pointer(ref))
+	return obj
+}
+
+// PassRef returns the underlying C object, otherwise it will allocate one and set its values
+// from this wrapping struct, counting allocations into an allocation map.
+func (x *GogcNested) PassRef() (*C.gogc_Nested, *cgoAllocMap) {
+	if x == nil {
+		return nil, nil
+	} else if x.ref9dd8d9bd != nil {
+		return x.ref9dd8d9bd, nil
+	}
+	mem9dd8d9bd := allocGogcNestedMemory(1)
+	ref9dd8d9bd := (*C.gogc_Nested)(mem9dd8d9bd)
+	allocs9dd8d9bd := new(cgoAllocMap)
+	allocs9dd8d9bd.Add(mem9dd8d9bd)
+
+	var ccomm_d_allocs *cgoAllocMap
+	ref9dd8d9bd.comm_d, ccomm_d_allocs = *(*[32]C.uint8_t)(unsafe.Pointer(&x.CommD)), cgoAllocsUnknown
+	allocs9dd8d9bd.Borrow(ccomm_d_allocs)
+
+	x.ref9dd8d9bd = ref9dd8d9bd
+	x.allocs9dd8d9bd = allocs9dd8d9bd
+	return ref9dd8d9bd, allocs9dd8d9bd
+
+}
+
+// PassValue does the same as PassRef except that it will try to dereference the returned pointer.
+func (x GogcNested) PassValue() (C.gogc_Nested, *cgoAllocMap) {
+	if x.ref9dd8d9bd != nil {
+		return *x.ref9dd8d9bd, nil
+	}
+	ref, allocs := x.PassRef()
+	return *ref, allocs
+}
+
+// Deref uses the underlying reference to C object and fills the wrapping struct with values.
+// Do not forget to call this method whether you get a struct for C object and want to read its values.
+func (x *GogcNested) Deref() {
+	if x.ref9dd8d9bd == nil {
+		return
+	}
+	x.CommD = *(*[32]byte)(unsafe.Pointer(&x.ref9dd8d9bd.comm_d))
+}
+
+// allocGogcPublicReplicaInfoMemory allocates memory for type C.gogc_PublicReplicaInfo in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocGogcPublicReplicaInfoMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfGogcPublicReplicaInfoValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfGogcPublicReplicaInfoValue = unsafe.Sizeof([1]C.gogc_PublicReplicaInfo{})
+
+type sliceHeader struct {
+	Data unsafe.Pointer
+	Len  int
+	Cap  int
+}
+
+// allocPGogcNestedMemory allocates memory for type *C.gogc_Nested in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocPGogcNestedMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfPGogcNestedValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfPGogcNestedValue = unsafe.Sizeof([1]*C.gogc_Nested{})
+
+const sizeOfPtr = unsafe.Sizeof(&struct{}{})
+
+// unpackSSGogcNested transforms a sliced Go data structure into plain C format.
+func unpackSSGogcNested(x [][]GogcNested) (unpacked **C.gogc_Nested, allocs *cgoAllocMap) {
+	if x == nil {
+		return nil, nil
+	}
+	allocs = new(cgoAllocMap)
+
+	len0 := len(x)
+	mem0 := allocPGogcNestedMemory(len0)
+	allocs.Add(mem0)
+	h0 := &sliceHeader{
+		Data: mem0,
+		Cap:  len0,
+		Len:  len0,
+	}
+	v0 := *(*[]*C.gogc_Nested)(unsafe.Pointer(h0))
+	for i0 := range x {
+		len1 := len(x[i0])
+		mem1 := allocGogcNestedMemory(len1)
+		allocs.Add(mem1)
+		h1 := &sliceHeader{
+			Data: mem1,
+			Cap:  len1,
+			Len:  len1,
+		}
+		v1 := *(*[]C.gogc_Nested)(unsafe.Pointer(h1))
+		for i1 := range x[i0] {
+			allocs1 := new(cgoAllocMap)
+			v1[i1], allocs1 = x[i0][i1].PassValue()
+			allocs.Borrow(allocs1)
+		}
+		h := (*sliceHeader)(unsafe.Pointer(&v1))
+		v0[i0] = (*C.gogc_Nested)(h.Data)
+	}
+	h := (*sliceHeader)(unsafe.Pointer(&v0))
+	unpacked = (**C.gogc_Nested)(h.Data)
+	return
+}
+
+// packSSGogcNested reads sliced Go data structure out from plain C format.
+func packSSGogcNested(v [][]GogcNested, ptr0 **C.gogc_Nested) {
+	const m = 0x7fffffff
+	for i0 := range v {
+		ptr1 := (*(*[m / sizeOfPtr]*C.gogc_Nested)(unsafe.Pointer(ptr0)))[i0]
+		for i1 := range v[i0] {
+			ptr2 := (*(*[m / sizeOfGogcNestedValue]C.gogc_Nested)(unsafe.Pointer(ptr1)))[i1]
+			v[i0][i1] = *NewGogcNestedRef(unsafe.Pointer(&ptr2))
+		}
+	}
+}
 
 // Ref returns the underlying reference to C object or nil if struct is nil.
 func (x *GogcPublicReplicaInfo) Ref() *C.gogc_PublicReplicaInfo {
@@ -148,6 +279,10 @@ func (x *GogcPublicReplicaInfo) PassRef() (*C.gogc_PublicReplicaInfo, *cgoAllocM
 	refafdcbbac.sector_id, csector_id_allocs = (C.uint64_t)(x.SectorId), cgoAllocsUnknown
 	allocsafdcbbac.Borrow(csector_id_allocs)
 
+	var cnested_allocs *cgoAllocMap
+	refafdcbbac.nested, cnested_allocs = unpackSSGogcNested(x.Nested)
+	allocsafdcbbac.Borrow(cnested_allocs)
+
 	x.refafdcbbac = refafdcbbac
 	x.allocsafdcbbac = allocsafdcbbac
 	return refafdcbbac, allocsafdcbbac
@@ -171,18 +306,123 @@ func (x *GogcPublicReplicaInfo) Deref() {
 	}
 	x.CommR = *(*[32]byte)(unsafe.Pointer(&x.refafdcbbac.comm_r))
 	x.SectorId = (uint64)(x.refafdcbbac.sector_id)
+	packSSGogcNested(x.Nested, x.refafdcbbac.nested)
 }
 
-type sliceHeader struct {
+// allocGogcPublicReplicaInfoCountResponseMemory allocates memory for type C.gogc_PublicReplicaInfoCountResponse in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocGogcPublicReplicaInfoCountResponseMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfGogcPublicReplicaInfoCountResponseValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfGogcPublicReplicaInfoCountResponseValue = unsafe.Sizeof([1]C.gogc_PublicReplicaInfoCountResponse{})
+
+// Ref returns the underlying reference to C object or nil if struct is nil.
+func (x *GogcPublicReplicaInfoCountResponse) Ref() *C.gogc_PublicReplicaInfoCountResponse {
+	if x == nil {
+		return nil
+	}
+	return x.refcb0aa722
+}
+
+// Free invokes alloc map's free mechanism that cleanups any allocated memory using C free.
+// Does nothing if struct is nil or has no allocation map.
+func (x *GogcPublicReplicaInfoCountResponse) Free() {
+	if x != nil && x.allocscb0aa722 != nil {
+		x.allocscb0aa722.(*cgoAllocMap).Free()
+		x.refcb0aa722 = nil
+	}
+}
+
+// NewGogcPublicReplicaInfoCountResponseRef creates a new wrapper struct with underlying reference set to the original C object.
+// Returns nil if the provided pointer to C object is nil too.
+func NewGogcPublicReplicaInfoCountResponseRef(ref unsafe.Pointer) *GogcPublicReplicaInfoCountResponse {
+	if ref == nil {
+		return nil
+	}
+	obj := new(GogcPublicReplicaInfoCountResponse)
+	obj.refcb0aa722 = (*C.gogc_PublicReplicaInfoCountResponse)(unsafe.Pointer(ref))
+	return obj
+}
+
+// PassRef returns the underlying C object, otherwise it will allocate one and set its values
+// from this wrapping struct, counting allocations into an allocation map.
+func (x *GogcPublicReplicaInfoCountResponse) PassRef() (*C.gogc_PublicReplicaInfoCountResponse, *cgoAllocMap) {
+	if x == nil {
+		return nil, nil
+	} else if x.refcb0aa722 != nil {
+		return x.refcb0aa722, nil
+	}
+	memcb0aa722 := allocGogcPublicReplicaInfoCountResponseMemory(1)
+	refcb0aa722 := (*C.gogc_PublicReplicaInfoCountResponse)(memcb0aa722)
+	allocscb0aa722 := new(cgoAllocMap)
+	allocscb0aa722.Add(memcb0aa722)
+
+	var ccount_slice_allocs *cgoAllocMap
+	refcb0aa722.count_slice, ccount_slice_allocs = (*C.uintptr_t)(unsafe.Pointer((*sliceHeader)(unsafe.Pointer(&x.CountSlice)).Data)), cgoAllocsUnknown
+	allocscb0aa722.Borrow(ccount_slice_allocs)
+
+	var ccount_count_allocs *cgoAllocMap
+	refcb0aa722.count_count, ccount_count_allocs = (C.uintptr_t)(x.CountCount), cgoAllocsUnknown
+	allocscb0aa722.Borrow(ccount_count_allocs)
+
+	x.refcb0aa722 = refcb0aa722
+	x.allocscb0aa722 = allocscb0aa722
+	return refcb0aa722, allocscb0aa722
+
+}
+
+// PassValue does the same as PassRef except that it will try to dereference the returned pointer.
+func (x GogcPublicReplicaInfoCountResponse) PassValue() (C.gogc_PublicReplicaInfoCountResponse, *cgoAllocMap) {
+	if x.refcb0aa722 != nil {
+		return *x.refcb0aa722, nil
+	}
+	ref, allocs := x.PassRef()
+	return *ref, allocs
+}
+
+// Deref uses the underlying reference to C object and fills the wrapping struct with values.
+// Do not forget to call this method whether you get a struct for C object and want to read its values.
+func (x *GogcPublicReplicaInfoCountResponse) Deref() {
+	if x.refcb0aa722 == nil {
+		return
+	}
+	hxfc4425b := (*sliceHeader)(unsafe.Pointer(&x.CountSlice))
+	hxfc4425b.Data = unsafe.Pointer(x.refcb0aa722.count_slice)
+	hxfc4425b.Cap = 0x7fffffff
+	// hxfc4425b.Len = ?
+
+	x.CountCount = (uint)(x.refcb0aa722.count_count)
+}
+
+// safeString ensures that the string is NULL-terminated, a NULL-terminated copy is created otherwise.
+func safeString(str string) string {
+	if len(str) > 0 && str[len(str)-1] != '\x00' {
+		str = str + "\x00"
+	} else if len(str) == 0 {
+		str = "\x00"
+	}
+	return str
+}
+
+// unpackPUint8TString represents the data from Go string as *C.uint8_t and avoids copying.
+func unpackPUint8TString(str string) (*C.uint8_t, *cgoAllocMap) {
+	str = safeString(str)
+	h := (*stringHeader)(unsafe.Pointer(&str))
+	return (*C.uint8_t)(h.Data), cgoAllocsUnknown
+}
+
+type stringHeader struct {
 	Data unsafe.Pointer
 	Len  int
-	Cap  int
 }
 
-const sizeOfPtr = unsafe.Sizeof(&struct{}{})
-
 // unpackArgSGogcPublicReplicaInfo transforms a sliced Go data structure into plain C format.
-func unpackArgSGogcPublicReplicaInfo(x []GogcPublicReplicaInfo) (unpacked *sliceHeader, allocs *cgoAllocMap) {
+func unpackArgSGogcPublicReplicaInfo(x []GogcPublicReplicaInfo) (unpacked *C.gogc_PublicReplicaInfo, allocs *cgoAllocMap) {
 	if x == nil {
 		return nil, nil
 	}
@@ -202,8 +442,8 @@ func unpackArgSGogcPublicReplicaInfo(x []GogcPublicReplicaInfo) (unpacked *slice
 		v0[i0], allocs0 = x[i0].PassValue()
 		allocs.Borrow(allocs0)
 	}
-	unpacked = (*sliceHeader)(unsafe.Pointer(&v0))
-
+	h := (*sliceHeader)(unsafe.Pointer(&v0))
+	unpacked = (*C.gogc_PublicReplicaInfo)(h.Data)
 	return
 }
 
@@ -211,8 +451,7 @@ func unpackArgSGogcPublicReplicaInfo(x []GogcPublicReplicaInfo) (unpacked *slice
 func packSGogcPublicReplicaInfo(v []GogcPublicReplicaInfo, ptr0 *C.gogc_PublicReplicaInfo) {
 	const m = 0x7fffffff
 	for i0 := range v {
-		ptr1 := (*(*[m / SizeOfGogcPublicReplicaInfoValue]C.gogc_PublicReplicaInfo)(unsafe.Pointer(ptr0)))[i0]
+		ptr1 := (*(*[m / sizeOfGogcPublicReplicaInfoValue]C.gogc_PublicReplicaInfo)(unsafe.Pointer(ptr0)))[i0]
 		v[i0] = *NewGogcPublicReplicaInfoRef(unsafe.Pointer(&ptr1))
-		v[i0].Deref()
 	}
 }
