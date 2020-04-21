@@ -4,14 +4,21 @@
 package gen
 
 /*
-#cgo LDFLAGS: -L${SRCDIR}/.. -lgogc
+#cgo LDFLAGS: -L${SRCDIR}/.. -lgogc -ldl
 #include "../gogc.h"
 #include <stdlib.h>
 #include "cgo_helpers.h"
 */
 import "C"
 
-// GogcPublicReplicaInfo as declared in go-gc/gogc.h:21
+// GogcPublicReplicaInfoResponse as declared in go-gc/gogc.h:20
+type GogcPublicReplicaInfoResponse struct {
+	Count          uint64
+	ref8f165427    *C.gogc_PublicReplicaInfoResponse
+	allocs8f165427 interface{}
+}
+
+// GogcPublicReplicaInfo as declared in go-gc/gogc.h:25
 type GogcPublicReplicaInfo struct {
 	CommR          [32]byte
 	SectorId       uint64

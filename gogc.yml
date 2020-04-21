@@ -8,7 +8,7 @@ GENERATOR:
   Includes:
     - ../gogc.h
   FlagGroups:
-    - {name: LDFLAGS, flags: ["-L${SRCDIR}/.. -lgogc"]}
+    - {name: LDFLAGS, flags: ["-L${SRCDIR}/.. -lgogc -ldl"]}
 
 PARSER:
   Defines:
